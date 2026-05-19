@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Link } from "react-router";
+import { BudgetContext } from "../contexts/BudgetContext";
 function Prodotti() {
     const [prodotti, setProdotti] = useState([]);
+
+    const { budgetMode } = useContext(BudgetContext);
 
     useEffect(() => {
         fetch("https://fakestoreapi.com/products")
@@ -10,6 +13,15 @@ function Prodotti() {
                 setProdotti(data);
             });
     }, []);
+
+    let prodottiDaMostrare = prodotti;
+
+    if (budgetMode === true) {
+        prodottiDaMostrare = prodotti.filter((prodotto) => {
+            return prodotto.price <= 30;
+        });
+    }
+
     return (
         <main className="page-section">
             <div className="container">
@@ -17,7 +29,7 @@ function Prodotti() {
                 <p className="page-subtitle">Lista dei prodotti</p>
 
                 <div className="row g-4 mt-3">
-                    {prodotti.map((prodotto) => (
+                    {prodottiDaMostrare.map((prodotto) => (
                         <div
                             className="col-12 col-sm-6 col-lg-4 col-xl-3"
                             key={prodotto.id}
